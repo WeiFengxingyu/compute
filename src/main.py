@@ -7,6 +7,7 @@ from src.data.generator import default_config, generate_orders, save_json
 from src.models.entities import Config, Order, SLOTS_PER_DAY, slot_in_day
 from src.algorithms.ga import run_ga
 from src.algorithms.vns import vns_improve
+from src.algorithms.pso import run_pso
 from src.utils.run_logger import create_run_dir, save_json as save_json_rl, order_to_dict, write_summary_md
 
 
@@ -89,6 +90,13 @@ def main():
     parser.add_argument("--sa_cooling", type=float, default=0.95, help="降温系数（0-1）")
     parser.add_argument("--sa_moves_per_temp", type=int, default=150, help="每温度尝试的移动次数")
     parser.add_argument("--sa_temps", type=int, default=20, help="温度层数")
+    # M5: PSO particle swarm optimization
+    parser.add_argument("--pso_enabled", action="store_true", help="启用粒子群优化（PSO）算法")
+    parser.add_argument("--pso_particles", type=int, default=30, help="粒子数量")
+    parser.add_argument("--pso_iterations", type=int, default=200, help="PSO迭代次数")
+    parser.add_argument("--pso_c1", type=float, default=2.0, help="认知系数c1")
+    parser.add_argument("--pso_c2", type=float, default=2.0, help="社会系数c2")
+    parser.add_argument("--pso_w", type=float, default=0.9, help="惯性权重w")
     args = parser.parse_args()
 
     # set seed for reproducibility
@@ -98,19 +106,36 @@ def main():
     config = load_config(args.config)
     orders = load_orders(args.orders, args.horizon)
 
-    best_schedule, eval_result = run_ga(
-        config=config,
-        orders=orders,
-        horizon_days=args.horizon,
-        generations=args.generations,
-        pop_size=args.pop,
-        pc=args.pc,
-        pm=args.pm,
-        use_soft_fitness=args.soft_deadline,
-        soft_alpha=args.soft_alpha,
-        soft_beta=args.soft_beta,
-        soft_gamma=args.soft_gamma,
-    )
+    # Choose algorithm: GA or PSO
+    if args.pso_enabled:
+        best_schedule, eval_result = run_pso(
+            config=config,
+            orders=orders,
+            horizon_days=args.horizon,
+            n_particles=args.pso_particles,
+            iterations=args.pso_iterations,
+            c1=args.pso_c1,
+            c2=args.pso_c2,
+            w=args.pso_w,
+            use_soft_fitness=args.soft_deadline,
+            soft_alpha=args.soft_alpha,
+            soft_beta=args.soft_beta,
+            soft_gamma=args.soft_gamma,
+        )
+    else:
+        best_schedule, eval_result = run_ga(
+            config=config,
+            orders=orders,
+            horizon_days=args.horizon,
+            generations=args.generations,
+            pop_size=args.pop,
+            pc=args.pc,
+            pm=args.pm,
+            use_soft_fitness=args.soft_deadline,
+            soft_alpha=args.soft_alpha,
+            soft_beta=args.soft_beta,
+            soft_gamma=args.soft_gamma,
+        )
 
     # Optional local search (M3): VNS
     if args.local_search == "vns":

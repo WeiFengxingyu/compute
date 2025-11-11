@@ -120,6 +120,19 @@ def build_cmd(py_exe: str, args: argparse.Namespace, seed: int) -> List[str]:
         cmd += ["--sa_moves_per_temp", str(args.sa_moves_per_temp)]
     if getattr(args, "sa_temps", None) is not None:
         cmd += ["--sa_temps", str(args.sa_temps)]
+    # forward PSO flags
+    if getattr(args, "pso_enabled", None):
+        cmd += ["--pso_enabled"]
+    if getattr(args, "pso_particles", None) is not None:
+        cmd += ["--pso_particles", str(args.pso_particles)]
+    if getattr(args, "pso_iterations", None) is not None:
+        cmd += ["--pso_iterations", str(args.pso_iterations)]
+    if getattr(args, "pso_c1", None) is not None:
+        cmd += ["--pso_c1", str(args.pso_c1)]
+    if getattr(args, "pso_c2", None) is not None:
+        cmd += ["--pso_c2", str(args.pso_c2)]
+    if getattr(args, "pso_w", None) is not None:
+        cmd += ["--pso_w", str(args.pso_w)]
     return cmd
 
 
@@ -151,6 +164,13 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--sa_cooling", type=float, default=0.95, help="降温系数（0-1）")
     ap.add_argument("--sa_moves_per_temp", type=int, default=150, help="每温度尝试的移动次数")
     ap.add_argument("--sa_temps", type=int, default=20, help="温度层数")
+    # M5: PSO flags
+    ap.add_argument("--pso_enabled", action="store_true", help="启用粒子群优化（PSO）算法")
+    ap.add_argument("--pso_particles", type=int, default=30, help="粒子数量")
+    ap.add_argument("--pso_iterations", type=int, default=200, help="PSO迭代次数")
+    ap.add_argument("--pso_c1", type=float, default=2.0, help="认知系数c1")
+    ap.add_argument("--pso_c2", type=float, default=2.0, help="社会系数c2")
+    ap.add_argument("--pso_w", type=float, default=0.9, help="惯性权重w")
     # M6 阶段2：场景支持（工资系数不同场景）
     ap.add_argument("--scenario", choices=list(SCENARIO_WAGE_MULTIPLIERS.keys()), help="单场景：工资系数方案")
     ap.add_argument("--scenarios", nargs="*", choices=list(SCENARIO_WAGE_MULTIPLIERS.keys()), help="多场景列表：一次批量跑多个场景")

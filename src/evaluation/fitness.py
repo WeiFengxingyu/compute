@@ -153,14 +153,16 @@ def compute_soft_fitness(
     schedule: List[List[Optional[int]]],
     config: Config,
     orders: List[Order],
-    alpha_deadline: float = 0.5,
-    beta_late_units: float = 0.2,
+    alpha_deadline: float = 1.5,  # 强化：从0.5提升到1.5
+    beta_late_units: float = 0.8,  # 强化：从0.2提升到0.8
     gamma_high_wage: float = 0.0,
 ) -> float:
-    """Return fitness score with soft deadline guidance.
+    """Return fitness score with soft deadline guidance (强化版本).
 
     - alpha_deadline: penalize production scheduled close to/past earliest due of its product.
+      强化版本：加大期限压力权重，引导算法更早安排生产
     - beta_late_units: penalize units not delivered before due (soft, separate from hard penalty).
+      强化版本：加大延迟单位惩罚，让算法感知延迟梯度
     - gamma_high_wage: discourage activity in high-wage slots (soft guidance).
     """
     res = evaluate_schedule(schedule, config, orders)
@@ -168,7 +170,7 @@ def compute_soft_fitness(
     # compute earliest due per product
     earliest_due = _earliest_due_per_product(orders)
 
-    # soft term 1: deadline pressure per produced capacity near/past due
+    # soft term 1: deadline pressure per produced capacity near/past due (强化版本)
     soft_deadline_pressure = 0.0
     for s, lines in enumerate(schedule):
         day = day_of_slot(s)
@@ -182,16 +184,22 @@ def compute_soft_fitness(
                 soft_deadline_pressure += 0.5 * p.slot_capacity
                 continue
             days_to_due = ed - day
-            # pressure grows as we get closer to or past due; min buffer considered = 2 days
-            pressure = max(0.0, 2.0 - days_to_due)
+            # 强化：增加压力敏感度，从2天缓冲改为3天，且指数增长压力
+            if days_to_due >= 3:
+                pressure = 0.0
+            elif days_to_due >= 1:
+                pressure = 1.0 + (3.0 - days_to_due)  # 线性增长
+            else:
+                pressure = 5.0 + (1.0 - days_to_due) * 2.0  # 超截止后指数增长
             soft_deadline_pressure += pressure * p.slot_capacity
 
-    # soft term 2: units not delivered before due (soft), independent of revenue penalty
+    # soft term 2: units not delivered before due (强化版本)
     delivered_bd = _delivered_before_due(schedule, config, orders)
     late_units_soft = 0.0
     for o in orders:
         late_units = max(0, o.qty - delivered_bd[o.id])
-        late_units_soft += late_units
+        # 强化：按订单价值加权延迟惩罚，让高价值订单延迟代价更大
+        late_units_soft += late_units * o.unit_price / 100.0  # 归一化到100元单位
 
     # soft term 3: high wage activity guidance
     high_wage_soft = 0.0

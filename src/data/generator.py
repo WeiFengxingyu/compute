@@ -17,10 +17,36 @@ def default_config() -> Dict[str, Any]:
     }
 
 
-def generate_orders(num_orders: int = 12, horizon_days: int = 7) -> List[Dict[str, Any]]:
+def generate_orders(num_orders: int = 12, horizon_days: int = 7, urgency: str = "medium") -> List[Dict[str, Any]]:
+    """
+    生成订单数据，支持不同的紧迫度场景
+    
+    Args:
+        num_orders: 订单数量
+        horizon_days: 时间范围天数
+        urgency: 紧迫度级别 ("loose", "medium", "tight")
+            - loose: 宽松，截止日期较远
+            - medium: 中等，默认行为
+            - tight: 紧张，截止日期较近
+    """
     orders: List[Dict[str, Any]] = []
     # product mix probabilities
     product_probs = [0.4, 0.35, 0.25]
+    
+    # 根据紧迫度设置截止日期分布
+    if urgency == "loose":
+        # 宽松：截止日期相对较远，给算法更多调度空间
+        due_day_min_offset = 2
+        due_day_max_offset = 4
+    elif urgency == "tight":
+        # 紧张：截止日期很近，考验算法的紧急调度能力
+        due_day_min_offset = 1
+        due_day_max_offset = 2
+    else:  # medium
+        # 中等：默认行为
+        due_day_min_offset = 1
+        due_day_max_offset = 3
+    
     for i in range(num_orders):
         # choose product
         r = random.random()
@@ -42,8 +68,14 @@ def generate_orders(num_orders: int = 12, horizon_days: int = 7) -> List[Dict[st
         arrival_day = random.randint(0, max(0, horizon_days - 2))
         arrival_slot_index = random.randint(0, 5)
 
-        # due day arrival_day+1..horizon_days-1 (must be after arrival)
-        due_day = random.randint(arrival_day + 1, horizon_days - 1)
+        # due day based on urgency setting
+        min_due = arrival_day + due_day_min_offset
+        max_due = min(arrival_day + due_day_max_offset, horizon_days - 1)
+        
+        if min_due > max_due:
+            due_day = min_due
+        else:
+            due_day = random.randint(min_due, max_due)
 
         orders.append(
             {
