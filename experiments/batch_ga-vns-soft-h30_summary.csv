@@ -1,0 +1,4 @@
+timestamp,exp_tag,seed,profit,total_revenue,production_cost,wage_cost,penalty,utilization_rate,on_time_rate,penalty_rate,run_dir
+2025-11-10T14:59:19,ga-vns-soft-h30,404,-674810.0,408300.0,388080.0,654200.0,40830.0,0.5018518518518519,0.0,1.0,experiments\run-20251110_145919_ga-vns-soft-h30_seed404
+2025-11-10T14:59:47,ga-vns-soft-h30,405,-684170.0,408300.0,381040.0,670600.0,40830.0,0.5055555555555555,0.0,1.0,experiments\run-20251110_145947_ga-vns-soft-h30_seed405
+2025-11-10T15:00:18,ga-vns-soft-h30,406,-661250.0,408300.0,377320.0,651400.0,40830.0,0.4962962962962963,0.0,1.0,experiments\run-20251110_150018_ga-vns-soft-h30_seed406

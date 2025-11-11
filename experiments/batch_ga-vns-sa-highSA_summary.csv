@@ -1,0 +1,4 @@
+timestamp,exp_tag,seed,profit,total_revenue,production_cost,wage_cost,penalty,utilization_rate,on_time_rate,penalty_rate,run_dir
+2025-11-10T16:00:35,ga-vns-sa-highSA,404,22190.0,403900.0,139160.0,224000.0,18550.0,0.746031746031746,0.5,0.5,experiments\run-20251110_160035_ga-vns-sa-highSA_seed404
+2025-11-10T16:00:39,ga-vns-sa-highSA,405,8050.0,350880.0,114000.0,188000.0,40830.0,0.6111111111111112,0.0,1.0,experiments\run-20251110_160039_ga-vns-sa-highSA_seed405
+2025-11-10T16:00:44,ga-vns-sa-highSA,406,17050.0,407100.0,138720.0,223200.0,28130.0,0.746031746031746,0.25,0.75,experiments\run-20251110_160044_ga-vns-sa-highSA_seed406

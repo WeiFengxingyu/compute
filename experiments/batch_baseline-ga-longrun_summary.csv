@@ -1,0 +1,11 @@
+timestamp,exp_tag,seed,profit,total_revenue,production_cost,wage_cost,penalty,utilization_rate,on_time_rate,penalty_rate,run_dir
+2025-11-01T11:21:15,baseline-ga-longrun,101,,,,,,,,,
+2025-11-01T11:21:15,baseline-ga-longrun,102,,,,,,,,,
+2025-11-01T11:21:15,baseline-ga-longrun,103,,,,,,,,,
+2025-11-01T11:21:15,baseline-ga-longrun,104,,,,,,,,,
+2025-11-01T11:21:15,baseline-ga-longrun,105,,,,,,,,,
+2025-11-01T11:22:15,baseline-ga-longrun,101,-1177790.0,408300.0,553560.0,997200.0,35330.0,0.7444444444444445,0.125,0.875,experiments\run-20251101_112215_baseline-ga-longrun_seed101
+2025-11-01T11:22:29,baseline-ga-longrun,102,-1155890.0,408300.0,552760.0,976100.0,35330.0,0.7222222222222222,0.125,0.875,experiments\run-20251101_112229_baseline-ga-longrun_seed102
+2025-11-01T11:22:44,baseline-ga-longrun,103,-1169050.0,408300.0,557920.0,978600.0,40830.0,0.7314814814814815,0.0,1.0,experiments\run-20251101_112244_baseline-ga-longrun_seed103
+2025-11-01T11:23:00,baseline-ga-longrun,104,-1177990.0,408300.0,563760.0,981700.0,40830.0,0.7333333333333333,0.0,1.0,experiments\run-20251101_112300_baseline-ga-longrun_seed104
+2025-11-01T11:23:16,baseline-ga-longrun,105,-1161390.0,408300.0,556360.0,972500.0,40830.0,0.725925925925926,0.0,1.0,experiments\run-20251101_112316_baseline-ga-longrun_seed105
