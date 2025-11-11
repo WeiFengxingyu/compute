@@ -1,0 +1,20 @@
+{
+  "profit": -723590.0,
+  "total_revenue": 408300.0,
+  "production_cost": 400560.0,
+  "wage_cost": 690500.0,
+  "penalty": 40830.0,
+  "utilization_rate": 0.5277777777777778,
+  "on_time_rate": 0.0,
+  "penalty_rate": 1.0,
+  "delivered_per_order": {
+    "O01": 600,
+    "O02": 500,
+    "O03": 420,
+    "O04": 450,
+    "O05": 380,
+    "O06": 360,
+    "O07": 520,
+    "O08": 410
+  }
+}

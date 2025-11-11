@@ -1,0 +1,10 @@
+{
+  "profit": -1177790.0,
+  "total_revenue": 408300.0,
+  "production_cost": 553560.0,
+  "wage_cost": 997200.0,
+  "penalty": 35330.0,
+  "utilization_rate": 0.7444444444444445,
+  "on_time_rate": 0.125,
+  "penalty_rate": 0.875
+}
