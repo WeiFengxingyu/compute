@@ -1,0 +1,80 @@
+\documentclass[UTF8]{ctexart}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{a4paper,margin=1in}
+
+\title{强化适应度驱动的生产线调度优化：多场景下的算法比较与复现}
+\author{你的姓名\\你的单位}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+我们研究了生产线调度中以交付期限为核心约束的优化问题，针对低准时率与高罚金的痛点，提出并系统验证了“强化适应度函数”（提高截止权重与软惩罚系数）的有效性。在 LOOSE/MEDIUM/TIGHT 三类订单紧迫度场景下，我们对 GA、GA+VNS、GA+VNS+SA、PSO 四种算法进行了三场景×30 次实验，比较了利润、产线利用率、准时率与罚金率，并进行了相对 GA 的配对 t 检验。结果表明：强化适应度策略显著提升了准时率并降低罚金；PSO 在期限遵守方面表现稳定与优越，而 GA+VNS+SA 在利用率与利润方面更具均衡性。我们开源了数据与脚本，并给出了参数调整时的最小重跑流程，确保结论可复现。
+\end{abstract}
+
+\section{引言}
+生产线调度需要平衡交付期限与效率成本。本文的贡献：提出强化适应度函数；构建多场景评价基准；比较 GA 家族与 PSO；提供可复现的实验流程与统计。
+
+\section{方法}
+\subsection{指标定义}
+利润、利用率、准时率、惩罚率。
+\subsection{强化适应度函数}
+提高截止权重与软惩罚系数（如 `alpha\_deadline`、`beta\_late\_units`），在搜索早期抑制晚交货，引导解向更高准时率区域；软惩罚的连续刻画利于 GA/VNS/SA 在复杂解空间持续前进。
+\subsection{算法配置}
+GA、GA+VNS、GA+VNS+SA、PSO；解码策略 EDD；PSO 随机源受 `--seed` 控制以实现复现。
+
+\section{实验设置}
+场景为 LOOSE/MEDIUM/TIGHT；每算法每场景 \(n=30\)。统计方法为均值±标准差，显著性采用相对 GA 的配对 t 检验（ns/*/***）。数据与脚本路径：`experiments/batch_*_m6s3_summary.csv`，`experiments/scripts/*.py`。
+
+\section{结果}
+\graphicspath{{figures/m8_plots/}}
+
+如图~\ref{fig:m8-profit}、\ref{fig:m8-util}、\ref{fig:m8-ontime}、\ref{fig:m8-radar} 所示，四算法在三场景下的利润、利用率、准时率及综合性能对比如下。
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{m8_profit_comparison.png}
+  \caption{利润对比（三场景 × 四算法，n=30）}
+  \label{fig:m8-profit}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{m8_utilization_comparison.png}
+  \caption{利用率对比（三场景 × 四算法，n=30）}
+  \label{fig:m8-util}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{m8_on_time_rate_comparison.png}
+  \caption{准时率对比（三场景 × 四算法，n=30）}
+  \label{fig:m8-ontime}
+\end{figure}
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\linewidth]{m8_radar_comparison.png}
+  \caption{综合性能雷达图}
+  \label{fig:m8-radar}
+\end{figure}
+
+数值摘要与显著性详见 \href{figures/m8_plots/m8_summary_table.md}{M8 数值摘要表（Markdown）}。
+
+\section{讨论}
+强化适应度在不同场景均提升期限遵守；PSO 的标准差趋零反映当前参数与解码稳定最优。若需探索随机性或参数（`w/c1/c2/max\_vel`），建议仅重跑 PSO 三场景×30 次并重新聚合与统计。
+
+\section{结论与未来工作}
+当交付及时性为首要目标时推荐 PSO；当利润与资源利用为优先时推荐 GA+VNS+SA。未来将扩展到多目标、动态订单、更多资源约束与实时调度。
+
+\section{复现与开源}
+数据与场景：`data/scenarios/*.json`；汇总数据：`experiments/batch_*_m6s3_summary.csv`；脚本：`experiments/scripts/*.py`；最小重跑：仅当 PSO 参数/随机性改变时，重跑三场景×30 次 → 聚合统计 → 同步表格与图。
+
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}
